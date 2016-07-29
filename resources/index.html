@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>API平台</title>
+<meta name="generator" content="editplus">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<script src="./js/jquery.js"></script>
+<script src="./js/common.min.js"></script>
+<script src="./conf/jsconfig.js"></script>
+<script src="./conf/util.js"></script>
+<script src="./conf/assert.js"></script>
+<script src="./js/index.js"></script>
+
+<style>
+html, body, div, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, label, legend, caption{font-size:13px; border:0 none;margin:0; padding:0;outline:0 none; color:#555; } 
+
+#container {
+	width: 960px;
+	margin: 0px auto;
+	height: auto;
+	margin-bottom:30px;
+	border:solid 1px #CCCCCC;
+	border-radius:8px 8px 8px 8px;
+}
+
+#left_container {
+	float: left;
+	width: 250px;
+	padding: 20px;
+	padding-top: 30px;
+	background:none repeat scroll 0 0 #F7F7F7;
+	border-radius:8px;
+	height:950px;
+}
+
+#right_container {
+	float: right;
+	width: 650px;
+}
+
+#clear {
+	clear: both;
+}
+
+textarea {
+	border: 1px dashed #ccc;
+	
+    border: 1px solid #C6C6C6;
+    box-shadow: 1px 1px 1px 0 #F0F0F0 inset;
+    color: #666666;
+
+    padding: 0 0 0 2px;
+    vertical-align: top;
+	
+    line-height: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+#right_request textarea , #right_response textarea{ width:610px;}
+
+#apitop {
+	height: 20px;
+	margin: 0px auto;
+	
+}
+
+
+
+#left_part1 select { width:110px}
+/*
+#left_part1 span input { background-color:#90E400;border-radius:8px;}
+*/
+
+#left_part2{ height:70px; border-bottom:solid 1px #CCCCCC;}
+#left_part2 .W_inputStp{outline-style:none;}
+#left_part2 .W_inputStp {border: 1px solid #C6C6C6;box-shadow: 1px 1px 1px 0 #F0F0F0 inset;color: #666666;height: 26px;line-height: 26px;padding: 0 0 0 2px;vertical-align: top; width:245px;}
+
+#left_part3{ margin:15px 0; }
+#left_part4{ margin:0 0 15px 0; }
+#left_part5{ margin:15px 0; }
+.cr{display:block;float:none;font-size:0;height:0;line-height:0;overflow:hidden;clear:both;visibility: hidden;}
+.del {cursor: pointer;}
+
+#left_part3 select , #left_part4 select{ width:186px;}
+
+#left_part_param{ background-color:#FFFFFF;border-radius:8px 8px 0 0; padding:10px; border:solid 1px #ccc; border-bottom:solid 1px #FFFFFF;}
+#left_part_param_add{background-color:#FFFFFF;border-radius:0 0 8px 8px; padding:0 10px 10px; border:solid 1px #ccc; border-top:solid 1px #FFFFFF; }
+
+
+#left_part_param input{border: 1px solid #C6C6C6;box-shadow: 1px 1px 1px 0 #F0F0F0 inset;color: #666666;height: 26px;line-height: 26px;padding: 0 0 0 2px;vertical-align: top; margin-top:4px;}
+
+#left_part_param div{ height:35px; padding:2px 0; line-height:30px;}
+
+#left_part_request{ margin:10px 0;}
+
+
+
+#right_request{ margin:30px 0 0 0;}
+#right_response{margin:20px 0 0 0;}
+
+
+</style>
+
+
+<script>
+//var apis={'广场接口':['/browser/photo/view||{"imgId":"3"}','bbb.json'],'广场接口2':['sadfasdfasdf.json','sdd3eeeeeeee.json']};
+
+
+</script>
+</head>
+
+<body>
+
+
+	<div id="tpl_container" style="display: none;">
+
+		<div id="tpl_param">
+			<div style="border: 1px dashed #ccc;">
+				<span><input type="text"
+					onblur="if(this.value==''){this.value='Key'; this.style.color='#ccc';};"
+					onfocus="if(this.value=='Key'){this.value='';} this.style.color='#666';"
+					value="Key" style="width: 70px;" name="key"
+					style="color: rgb(204, 204, 204);"></span>:<span><input
+					type="text"
+					onblur="if(this.value==''){this.value='Value'; this.style.color='#ccc';}"
+					onfocus="if(this.value=='Value'){this.value=''} this.style.color='#666';"
+					value="Value" style="width: 70px;" title="{desc}" name="val"></span> <span
+					class="del">DEL</span>
+			</div>
+		</div>
+		
+		<textarea id="tpl_map2bean" style="display: none;" >
+		
+	public	class BeanUtil {
+	public static <T> T map2Bean(Map map, Class<T> cls) {
+		Object obj = null;
+		try {
+			obj = cls.newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// 取出bean里的所有方法
+		Method[] methods = cls.getMethods();
+		for (int i = 0; i < methods.length; i++) {
+			// 取方法名
+			String method = methods[i].getName();
+			// 取出方法的类型
+			Class[] cc = methods[i].getParameterTypes();
+			if (cc.length != 1)
+				continue;
+
+			// 如果方法名没有以set开头的则退出本次for
+			if (method.indexOf("set") < 0)
+				continue;
+			// 类型
+			String type = cc[0].getSimpleName();
+
+			try {
+				// 转成小写
+				// Object value = method.substring(3).toLowerCase();
+				Object value = method.substring(3, 4).toLowerCase() + method.substring(4);
+				// 如果map里有该key
+				if (map.containsKey(value) && map.get(value) != null) {
+					// 调用其底层方法
+					setValue(type, map.get(value), i, methods, obj);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return (T) obj;
+	}
+
+	private static void setValue(String type, Object value, int i, Method[] method, Object bean) {
+		if (value != null && !value.equals("")) {
+			try {
+				if (type.equals("String")) {
+					// 第一个参数:从中调用基础方法的对象 第二个参数:用于方法调用的参数
+					method[i].invoke(bean, new Object[] { value });
+				} else if (type.equals("int") || type.equals("Integer")) {
+					method[i].invoke(bean, new Object[] { new Integer("" + value) });
+				} else if (type.equals("long") || type.equals("Long")) {
+					method[i].invoke(bean, new Object[] { new Long("" + value) });
+				} else if (type.equals("boolean") || type.equals("Boolean")) {
+					method[i].invoke(bean, new Object[] { Boolean.valueOf("" + value) });
+				} else if (type.equals("BigDecimal")) {
+					method[i].invoke(bean, new Object[] { new BigDecimal("" + value) });
+				} else if (type.equals("Date")) {
+					Date date = null;
+					if (value.getClass().getName().equals("java.util.Date")) {
+						date = (Date) value;
+					} else if (value.getClass().getName().equals("java.sql.Timestamp")) {
+						date = new Date(((Timestamp) (value)).getTime());
+					} else if (value.getClass().getName().equals("java.lang.Integer")) {
+						date = new Date(((Integer) (value)));
+					} else {
+						String format = ((String) value).indexOf(":") > 0 ? "yyyy-MM-dd hh:mm:ss" : "yyyy-MM-dd";
+						SimpleDateFormat fmt = new SimpleDateFormat(format);
+						date = fmt.parse((String) value);
+
+					}
+					if (date != null) {
+						method[i].invoke(bean, new Object[] { date });
+					}
+				} else if (type.equals("byte[]")) {
+					method[i].invoke(bean, new Object[] { new String(value + "").getBytes() });
+				}
+			} catch (Exception e) {
+				System.out.println("将linkHashMap 或 HashTable 里的值填充到javabean时出错,请检查!");
+				e.printStackTrace();
+			}
+		}
+	}
+}
+		
+		</textarea>
+
+
+	</div>
+
+	<div id="apitop"></div>
+	<div id="container">
+<div id="left_container">
+		
+		
+		
+			<div id="left_part1" class="left_part" style="height:25px;">
+				平台： <a href="index.html?platform=browser">浏览器</a>&nbsp;&nbsp;
+				 <a href="index.html?platform=android">Android</a>&nbsp;&nbsp;
+				 <a href="index.html?platform=tool&dwr=1">懒人工具箱</a>
+			</div>
+			
+					<div id="left_part1" class="left_part" style="height:95px;">
+					<textarea rows="4" id="setting_txt"  cols="25">{"loginType":"client/sn","username":"appadmin","pwd":"appadmin111","sn":"040ABG49FTS3","cookie":""}</textarea>
+					<!--  
+				<input id="setting_txt" type="text" value='{"loginType":"client/sn","username":"appadmin","pwd":"appadmin111","sn":"040ABG49FTS3","cookie":""}' /> 
+				 -->
+				
+				<input type="button" id="setting" value="setting"/>
+			</div>
+			<!-- 
+			<div id="left_part1" class="left_part">
+				<select node-type="applist" select="">
+					<option value="1117351193">oauth</option>
+				</select> <span><input type="button" value="获取Acess Token" /> </span>
+			</div>
+			<div id="left_part2" class="left_part">
+				Access Token:<br /> <input type="text" value="" class="W_inputStp"
+					node-type="accessToken">
+			</div>
+			 -->
+			<div id="left_part3" class="left_part">
+				<span> 项目: <select id="projects" name="projects"><option
+							value="63">项目</option>
+				</select>
+				</span>
+
+			</div>
+
+			<div id="left_part3" class="left_part">
+				<span> API分类: <select id="apitype" name="apitype"><option
+							value="63">API分类</option>
+				</select>
+				</span>
+
+			</div>
+
+			<div id="left_part4" class="left_part">
+				<span> API名称: <select id="apiname" name="apiname"><option
+							value="63">API名称</option>
+						
+				</select>
+				</span>
+			</div>
+
+			<div id="left_part5" class="left_part">
+				<span>获取方式:<label><input type="radio"
+						name="request_type" value="get" checked="checked">GET</label><label><input
+						type="radio" name="request_type" value="post">POST</label></span>
+			</div>
+			
+		
+			
+			<div id="left_part_param" >
+				<div >
+					<span><input type="text"
+						onblur="if(this.value==''){this.value='Key'; this.style.color='#ccc';};"
+						onfocus="if(this.value=='Key'){this.value='';} this.style.color='#666';"
+						value="Key" style="width: 70px;" name="key"
+						style="color: rgb(204, 204, 204);"></span>:<span><input
+						type="text"
+						onblur="if(this.value==''){this.value='Value'; this.style.color='#ccc';}"
+						onfocus="if(this.value=='Value'){this.value=''} this.style.color='#666';"
+						value="Value" style="width: 70px;" name="val"></span> <span
+						class="del">DEL</span>
+				</div>
+			</div>
+			<div id="left_part_param_add">
+				<span><input type="button" id="add" value="增加" /> </span>
+			</div>
+			<div id="left_part_request">
+				<span id="web_request"> <input type="button" value="调用接口" />
+				</span>
+			</div>
+			
+
+			
+			
+			<div id="tool_container" style="display: none;">
+			
+			<div id="left_part_request" style="margin-top: 60px;">
+				<span id="json2bean"> <input type="button" value="JSON合成JavaBean参考" />
+				</span>
+			</div>
+			<div id="left_part_request">
+				<span id="json2table"> <input type="button" value="JSON合成Table参考" />
+				</span>
+			</div>
+		
+			<div id="left_part_request">
+				<span id="map2bean"> <input type="button" value="BeanUtil" />
+				</span>
+			</div>
+			
+			<div id="left_part_request">
+				<span id="cls2url"> <input title="||service/api/" type="button" value="生成接口说明" />
+				</span>
+			</div>
+			
+			<div id="left_part_request">
+				<span id="addtest"> <input title="自动化测试" type="button" value="自动化测试" />
+				</span>
+			</div>
+			
+			<div id="left_part_request">
+				<span> <input id="addmonitor" title="启动监控" type="button" value="启动监控" />
+				<input id="delmonitor" title="停止监控" type="button" value="停止监控" />
+				</span>
+			</div>
+			
+			</div>
+			
+			
+	         <div>
+				<div>Any Problem Please Contact Xiao Zhang. QQ:546499741
+				<br />
+					email:s_jqzhang@163.com  
+				</div>
+				
+			</div>
+			
+			<div>
+				<g:plusone annotation="inline"></g:plusone>
+			</div>
+		
+			
+			
+
+
+		</div>
+		<div id="right_container">
+		
+			<div id="right_request">
+				<div class="right_title">Ping信息</div>
+				<div>
+					<textarea rows="4" cols="80" id="ping"></textarea>
+				</div>
+			</div>
+
+			<div id="right_request">
+				<div class="right_title">请求(*basePath:http://mshow.meizu.com/c)</div>
+				<div>
+					<textarea rows="4" cols="80" id="request"></textarea>
+				</div>
+			</div>
+			<div id="right_response">
+				<div class="right_title">返回的内容：</div>
+				<div>
+					<textarea rows="20" cols="80" id="response">{}</textarea>
+				</div>
+			</div>
+			<div id="right_response2">
+				<div class="right_title">JAVA参考对象：</div>
+				<div>
+					<textarea rows="20" cols="80" id="responsejava" style="width: 610px;"></textarea>
+				</div>
+			</div>
+		</div>
+		<div id="clear"></div>
+
+	</div>
+	
+	<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+</body>
+</html>
