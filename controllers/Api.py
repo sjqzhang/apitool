@@ -6,10 +6,12 @@ __author__ = 'xiaozhang'
 
 import re
 import cgi
+import json
 
 from codeigniter import ci
 import StringIO
 import urllib
+import requests
 class Api(object):
 
 
@@ -95,14 +97,20 @@ requests.post('http://127.0.0.1:8005/api/request',data).text
         host=req.params.pop('__host')
 
         header=self._setting.get(host,{})
-
+        header['Content-Type'] = "application/json"
+        header['user-agent']='api'
 
         try:
             if req.method=='GET':
                 data=urlencode(req.params)
                 return ci.request(host+url+'?'+data,header)
-            else:
-                return ci.request(host+url,req.params,header)
+            elif req.method=='POST':
+                if '__raw__' in req.params:
+                    del req.params['__raw__']
+                    header['Content-Type'] = "application/json"
+                    return requests.post(host+url,data=json.dumps(req.params),headers=header).json()
+                else:
+                    return ci.request(host+url,req.params,header)
         except Exception as er:
             return str(er)
 
